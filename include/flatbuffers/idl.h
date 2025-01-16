@@ -47,7 +47,8 @@ namespace flatbuffers {
 // clang-format off
 #define FLATBUFFERS_GEN_TYPES_SCALAR(TD) \
   TD(NONE,     "",       uint8_t,  byte,   byte,    byte,   uint8,   u8,   UByte, UInt8, 0) \
-  TD(UTYPE,    "",       uint8_t,  byte,   byte,    byte,   uint8,   u8,   UByte, UInt8, 1) /* begin scalar/int */ \
+  /*TD(UTYPE,    "",       uint8_t,  byte,   byte,    byte,   uint8,   u8,   UByte, UInt8, 1)*/ /* begin scalar/int */ \
+  TD(UTYPE,    "",       uint16_t, short,  uint16,  ushort, uint16,  u16,  UShort, UInt16, 1) /* begin scalar/int */ \
   TD(BOOL,     "bool",   uint8_t,  boolean,bool,    bool,   bool,    bool, Boolean, Bool, 2) \
   TD(CHAR,     "byte",   int8_t,   byte,   int8,    sbyte,  int8,    i8,   Byte, Int8, 3) \
   TD(UCHAR,    "ubyte",  uint8_t,  byte,   byte,    byte,   uint8,   u8,   UByte, UInt8, 4) \
