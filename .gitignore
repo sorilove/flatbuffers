@@ -155,6 +155,7 @@ _deps/
 kotlin/**/generated
 MODULE.bazel
 MODULE.bazel.lock
+out/
 
 # Ignore the generated docs
 docs/site
