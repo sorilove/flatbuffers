@@ -150,7 +150,9 @@ class TsGenerator : public BaseGenerator {
     std::string code;
 
     code += "// " + std::string(FlatBuffersGeneratedWarning()) + "\n\n" +
-        "/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any, @typescript-eslint/no-non-null-assertion */\n\n";
+            "/* eslint-disable @typescript-eslint/no-unused-vars, "
+            "@typescript-eslint/no-explicit-any, "
+            "@typescript-eslint/no-non-null-assertion */\n\n";
 
     for (auto it = bare_imports.begin(); it != bare_imports.end(); it++) {
       code += it->second.import_statement + "\n";
@@ -256,8 +258,10 @@ class TsGenerator : public BaseGenerator {
 
     for (const auto &it : ns_defs_) {
       code = "// " + std::string(FlatBuffersGeneratedWarning()) + "\n\n" +
-        "/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any, @typescript-eslint/no-non-null-assertion */\n\n";
-      
+             "/* eslint-disable @typescript-eslint/no-unused-vars, "
+             "@typescript-eslint/no-explicit-any, "
+             "@typescript-eslint/no-non-null-assertion */\n\n";
+
       // export all definitions in ns entry point module
       int export_counter = 0;
       for (const auto &def : it.second.definitions) {
@@ -382,7 +386,17 @@ class TsGenerator : public BaseGenerator {
         code += " = ";
         code += "'" + namer_.Variant(ev) + "'";
       } else {
-        code += "  " + namer_.Variant(ev);
+        // ------------------------ 수정본
+        // by sorilove: union 을 위한 enum 생성시 namespace를 추가하지 않도록 수정
+        size_t pos = ev.name.find('_');
+        if (pos != std::string::npos) {
+          code += "  " + ev.name.substr(pos + 1);
+        } else {
+          code += "  " + namer_.Variant(ev);
+        }
+        // ------------------------ 아래는 오리지널
+        // code += "  " + namer_.Variant(ev);
+        // ------------------------
         code += " = ";
         // Unfortunately, because typescript does not support bigint enums,
         // for 64-bit enums, we instead map the enum names to strings.
@@ -565,19 +579,19 @@ class TsGenerator : public BaseGenerator {
     }
   }
 
-  static Type GetUnionUnderlyingType(const Type &type)
-  {
-    if (type.enum_def != nullptr && 
+  static Type GetUnionUnderlyingType(const Type &type) {
+    if (type.enum_def != nullptr &&
         type.enum_def->underlying_type.base_type != type.base_type) {
       return type.enum_def->underlying_type;
     } else {
-        return Type(BASE_TYPE_UCHAR);
+      return Type(BASE_TYPE_UCHAR);
     }
   }
 
-  static Type GetUnderlyingVectorType(const Type &vector_type)
-  {
-    return (vector_type.base_type == BASE_TYPE_UTYPE) ? GetUnionUnderlyingType(vector_type) : vector_type;
+  static Type GetUnderlyingVectorType(const Type &vector_type) {
+    return (vector_type.base_type == BASE_TYPE_UTYPE)
+               ? GetUnionUnderlyingType(vector_type)
+               : vector_type;
   }
 
   // Returns the method name for use with add/put calls.
@@ -1011,7 +1025,17 @@ class TsGenerator : public BaseGenerator {
           const auto &ev = **it;
           if (ev.IsZero()) { continue; }
 
-          ret += "    case '" + namer_.Variant(ev) + "': ";
+          // ------------------------ 수정본
+          // by sorilove: union 을 위한 enum 생성시 namespace를 추가하지 않도록 수정
+          size_t pos = ev.name.find('_');
+          if (pos != std::string::npos) {
+            ret += "    case '" + ev.name.substr(pos + 1) + "': ";
+          } else {
+            ret += "    case '" + namer_.Variant(ev) + "': ";
+          }
+          // ------------------------ 아래는 오리지널
+          // ret += "    case '" + namer_.Variant(ev) + "': ";
+          // ------------------------
 
           if (IsString(ev.union_type)) {
             ret += "return " + accessor_str + "'') as string;";

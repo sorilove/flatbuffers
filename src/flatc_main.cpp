@@ -72,6 +72,20 @@ void LogCompilerError(const std::string &err) {
 int main(int argc, const char *argv[]) {
   const std::string flatbuffers_version(flatbuffers::FLATBUFFERS_VERSION());
 
+  // ------------------------ 디버그를 위한 추가 코드 ------------------------
+  // by sorilove: 
+  // argv에 내용 추가
+  /*std::vector<const char *> new_argv(argv, argv + argc);
+  new_argv.push_back("--ts");
+  new_argv.push_back("--ts-no-import-ext");
+  new_argv.push_back("--gen-object-api");
+  new_argv.push_back("-o");
+  new_argv.push_back("F:\\sources2\\outputGen");
+  new_argv.push_back("F:\\sources2\\next_worksapce\\flatbuffers\\request-packet.fbs");
+  argc = new_argv.size();
+  argv = new_argv.data();*/
+  // ------------------------ 디버그를 위한 추가 코드 ------------------------
+
   g_program_name = argv[0];
 
   flatbuffers::FlatCompiler::InitParams params;
@@ -126,8 +140,9 @@ int main(int argc, const char *argv[]) {
       flatbuffers::NewKotlinCodeGenerator());
 
   flatc.RegisterCodeGenerator(
-      flatbuffers::FlatCOption{ "", "kotlin-kmp", "",
-                                "Generate Kotlin multiplatform classes for tables/structs" },
+      flatbuffers::FlatCOption{
+          "", "kotlin-kmp", "",
+          "Generate Kotlin multiplatform classes for tables/structs" },
       flatbuffers::NewKotlinKMPCodeGenerator());
 
   flatc.RegisterCodeGenerator(
