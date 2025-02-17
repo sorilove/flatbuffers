@@ -388,9 +388,12 @@ class TsGenerator : public BaseGenerator {
       } else {
         // ------------------------ 수정본
         // by sorilove: union 을 위한 enum 생성시 namespace를 추가하지 않도록 수정
-        size_t pos = ev.name.find('_');
-        if (pos != std::string::npos) {
-          code += "  " + ev.name.substr(pos + 1);
+        if (ev.union_type.struct_def != nullptr && ev.union_type.struct_def->defined_namespace != nullptr) {
+          // defined_namespace가 존재합니다.
+          // auto &namespace_component = ev.union_type.struct_def->defined_namespace->components[0];
+          auto &namespace_component = ev.union_type.struct_def->defined_namespace->components[0];
+          auto name = ev.name.substr(namespace_component.length() + 1);
+          code += "  " + name;
         } else {
           code += "  " + namer_.Variant(ev);
         }
@@ -1027,9 +1030,12 @@ class TsGenerator : public BaseGenerator {
 
           // ------------------------ 수정본
           // by sorilove: union 을 위한 enum 생성시 namespace를 추가하지 않도록 수정
-          size_t pos = ev.name.find('_');
-          if (pos != std::string::npos) {
-            ret += "    case '" + ev.name.substr(pos + 1) + "': ";
+          if (ev.union_type.struct_def != nullptr && ev.union_type.struct_def->defined_namespace != nullptr) {
+            // defined_namespace가 존재합니다.
+            // auto &namespace_component = ev.union_type.struct_def->defined_namespace->components[0];
+            auto &namespace_component = ev.union_type.struct_def->defined_namespace->components[0];
+            auto name = ev.name.substr(namespace_component.length() + 1);
+            ret += "    case '" + name + "': ";
           } else {
             ret += "    case '" + namer_.Variant(ev) + "': ";
           }
